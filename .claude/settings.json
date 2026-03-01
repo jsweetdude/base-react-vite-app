@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__a11y-context__*",
+      "Read(./**)",
+      "Edit(./src/**)",
+      "Edit(./package.json)",
+      "Edit(./index.html)",
+      "Edit(./vite.config.*)",
+      "Edit(./.claude/**)"
+    ],
+    "deny": [
+      "Bash(*)"
+    ],
+    "ask": []
+  }
+}
