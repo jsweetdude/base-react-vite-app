@@ -1,6 +1,6 @@
 ---
 description: A11y Context MCP Router. Enforce MCP-first best-practice retrieval, deterministic tool usage, caching, styling constraints, and global-rules compliance.
-alwaysApply: true
+applyTo: "**/*.{ts,tsx,js,jsx,html,css,scss}"
 ---
 
 # A11y Context Project — MCP Router (Fast + Reproducible)
@@ -63,3 +63,16 @@ You have access to MCP server `a11y-context` with tools:
 - Do not refactor unrelated code.
 - Do not introduce architectural changes beyond the requested scope.
 - Only retrieve and apply patterns for components actually being implemented.
+
+## Response Format (proof-of-concept only)
+
+A. Component Inventory
+- List the individual components generated for the code output response, noting those for which `get_pattern` was pulled.
+B. MCP Tools Call
+- List the MCP tools that were called, in order.
+C. Selection Decisions
+- Explain the selection decisions that were made to pick the correct pattern for each component.
+D. Global Rules Application
+- If `get_global_rules` was called and rules were applied, list the rules that were applied, and where they were applied in the code.
+E. Token Consumption
+- Display the total token consumption for the MCP calls.

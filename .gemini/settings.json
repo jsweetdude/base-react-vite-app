@@ -1,0 +1,12 @@
+{
+  "mcp": {
+    "allowed": ["a11y-context"]
+  },
+  "mcpServers": {
+    "a11y-context": {
+      "httpUrl": "https://accessibility-pattern-mcp-production.up.railway.app/mcp",
+      "timeout": 600000,
+      "trust": false
+    }
+  }
+}

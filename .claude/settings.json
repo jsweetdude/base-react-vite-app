@@ -1,16 +1,27 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "enabledMcpjsonServers": ["a11y-context"],
   "permissions": {
     "allow": [
-      "mcp__a11y-context__*",
-      "Read(./**)",
-      "Edit(./src/**)",
-      "Edit(./package.json)",
-      "Edit(./index.html)",
-      "Edit(./vite.config.*)",
-      "Edit(./.claude/**)"
+      "mcp__a11y-context__*"
     ],
     "deny": [
-      "Bash(*)"
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Edit(./secrets/**)",
+
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Write(./secrets/**)",
+
+      "Edit(./.claude/settings.json)",
+      "Write(./.claude/settings.json)",
+      "Edit(./.mcp.json)",
+      "Write(./.mcp.json)"
     ],
     "ask": []
   }
