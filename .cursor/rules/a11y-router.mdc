@@ -1,39 +1,65 @@
 ---
-description: A11y Context MCP Router. Enforce deterministic tool usage, cached catalog, multi-component coverage, and global-rules compliance.
+description: A11y Context MCP Router. Enforce MCP-first best-practice retrieval, deterministic tool usage, caching, styling constraints, and global-rules compliance.
 alwaysApply: true
 ---
 
 # A11y Context Project — MCP Router (Fast + Reproducible)
 
-You have access to MCP server `a11y-context` with tools:
-- `list_patterns`
-- `get_pattern`
-- `get_global_rules`
+## Core Mandate
 
-Tool signatures (use these exact argument names and default stack):
+Before generating final front-end code, retrieve and apply relevant accessibility best practices from MCP (patterns + global rules).
+
+## MCP Tools
+
+You have access to MCP server `a11y-context` with tools:
 - `list_patterns({ stack: "web/react", tags?: string[], query?: string })`
 - `get_pattern({ stack: "web/react", id: string })`
 - `get_global_rules({ stack: "web/react" })`
 
-Hard requirements (do not skip):
-1. **Stack resolution:** Default to `stack = "web/react"` for all MCP calls. Only use a different stack if the user explicitly requests it. If a different stack is requested and unsupported, state the limitation and proceed with `web/react` equivalents (or stop if the task cannot be adapted).
-2. **No Bash MCP validation:** Do not use Bash to validate MCP connectivity (no curl to `/mcp`, no MCP inspector CLI, no running local server files). Use MCP tools only. If an MCP tool call fails, report the error and stop.
-3. **Component Inventory first:** Before any MCP calls, output a short Component Inventory (max 8 bullets). Include page shell/layout as a unit if applicable.
-4. **Catalog caching:** Call `list_patterns` at most once per chat per `catalog_revision`. If a `list_patterns` result with `catalog_revision` already exists earlier in this chat, reuse it and do not call `list_patterns` again.
-5. **Selection discipline:** For each unit you will implement, select the best pattern using only the cached `list_patterns` output:
-   - Quote `selection_excerpt` to justify the match.
-   - Explicitly reject candidates where `do_not_use_when` applies.
-   - Do not fetch patterns for units you are not implementing.
-6. **Pattern fetch:** Call `get_pattern` only for chosen patterns you will implement, and at most once per chosen pattern per chat (reuse the guidance afterward).
-7. **Global rules:** Call `get_global_rules` at most once per chat (preflight if structural: page shell/headings/landmarks/focus-critical UI; otherwise postflight). Apply applicable MUST rules to the final code.
-8. **No unrelated changes:** Follow golden pattern guidance and avoid unrelated refactors outside requested units.
+## Platform Parameters
 
-Required response format:
-A. Component Inventory  
-B. MCP Plan (tool calls in order; note reuse vs call for `list_patterns`/`get_global_rules`)  
-C. Execute tools  
-D. Selection Decisions (include `selection_excerpt` quotes + `do_not_use_when` rejections)  
-E. Code  
-F. Global Rules Application (max 5 bullets)  
-G. Pattern Coverage (one line per unit: pattern id or “native + global rules”)  
-H. Self-check (confirm requirements 1–8 were met)
+- Default to `stack = "web/react"` for all MCP calls.
+- Only use a different stack if the user explicitly requests it.
+- If a different stack is requested and unsupported, state the limitation and proceed with `web/react` equivalents (or stop if the task cannot be adapted).
+
+## Order of Operations
+
+1. Ensure a cached `list_patterns` catalog exists for this chat (call once if needed).
+2. For each component you will implement: select via `selection_excerpt`, reject `do_not_use_when`, then call `get_pattern` once and cache.
+3. If the task includes page/layout/landmarks/headings or focus-critical UI: call `get_global_rules` once and cache.
+4. Apply retrieved guidance, then produce final code.
+
+## Guardrails
+
+### MCP-First Enforcement
+- Do not generate final code until relevant MCP guidance has been retrieved (or you explicitly state that no pattern/global rules apply).
+- Use MCP tools only. Do not invoke MCP via Bash (no curl to `/mcp`, no MCP inspector CLI, no running local server files).
+- If an MCP tool call fails, report the error and stop. Do not attempt alternative transport mechanisms.
+
+### Catalog & Retrieval Discipline
+- Call `list_patterns` at most once per chat unless you cannot find a suitable match in the cached catalog.
+- Select patterns using `selection_excerpt`.
+- Explicitly reject candidates where `do_not_use_when` applies.
+- Call `get_pattern` only for components you will implement, and at most once per pattern id per chat.
+- If no suitable pattern exists, state `Native + global rules` and proceed.
+
+### Global Rules Usage
+- Call `get_global_rules` only when the task involves page/layout structure, headings/landmarks, navigation, or focus-critical UI (dialogs, menus, carousels).
+- Cache global rules once per chat.
+- Apply applicable MUST rules before final output.
+
+### Design System & Component Integrity (Minimal-Change Default)
+- If the project uses a component library or design system, preserve it.
+- Prefer minimal-change compliance: correct usage (props/labels/structure) before replacement.
+- If a component is inaccessible, create a small wrapper/adapter or propose an upstream fix.
+- Replace components only if explicitly requested or locally owned in the repository.
+
+### Styling Constraints (Project-First)
+- Use the project’s styling system (Tailwind, design system, CSS modules, etc.).
+- Treat pattern styling snippets as optional examples.
+- Do not introduce a new styling approach or dependency unless explicitly requested.
+
+### Scope Control
+- Do not refactor unrelated code.
+- Do not introduce architectural changes beyond the requested scope.
+- Only retrieve and apply patterns for components actually being implemented.
