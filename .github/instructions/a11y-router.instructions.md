@@ -32,15 +32,17 @@ You have access to MCP server `a11y-context` with tools:
 ## Guardrails
 
 ### MCP-First Enforcement
-- Do not generate final code until relevant MCP guidance has been retrieved (or you explicitly state that no pattern/global rules apply).
+- MUST NOT generate final code until relevant MCP guidance has been retrieved (or you explicitly state that no pattern/global rules apply).
 - Use MCP tools only. Do not invoke MCP via Bash (no curl to `/mcp`, no MCP inspector CLI, no running local server files).
 - If an MCP tool call fails, report the error and stop. Do not attempt alternative transport mechanisms.
 
 ### Catalog & Retrieval Discipline
-- Call `list_patterns` at most once per chat unless you cannot find a suitable match in the cached catalog.
+- On every user request that changes UI, the agent MUST run a pattern-selection pass for each new/modified page or component.” 
+  - Run pattern-selection using `list_patterns` `selection_excerpt` (`use_when` and `do_not_use_when`) before writing code.
+- `list_patterns` MUST be called at most *once* per chat unless you cannot find a suitable match in the cached catalog.
 - Select patterns using `selection_excerpt`.
 - Explicitly reject candidates where `do_not_use_when` applies.
-- Call `get_pattern` only for components you will implement, and at most once per pattern id per chat.
+- Call `get_pattern(id)` MUST be called at most *once* per pattern `id` per chat, and only for components you will implement.
 - If no suitable pattern exists, state `Native + global rules` and proceed.
 
 ### Global Rules Usage
@@ -64,15 +66,9 @@ You have access to MCP server `a11y-context` with tools:
 - Do not introduce architectural changes beyond the requested scope.
 - Only retrieve and apply patterns for components actually being implemented.
 
-## Response Format (proof-of-concept only)
-
-A. Component Inventory
-- List the individual components generated for the code output response, noting those for which `get_pattern` was pulled.
-B. MCP Tools Call
-- List the MCP tools that were called, in order.
-C. Selection Decisions
-- Explain the selection decisions that were made to pick the correct pattern for each component.
-D. Global Rules Application
-- If `get_global_rules` was called and rules were applied, list the rules that were applied, and where they were applied in the code.
-E. Token Consumption
-- Display the total token consumption for the MCP calls.
+### User Communication Policy
+- Apply MCP retrieval, pattern selection, and rule checks implicitly during implementation.
+- Keep user-facing responses focused on outcomes, not internal MCP workflow.
+- Surface MCP/process details only when:
+  - implementation is blocked by a rule or tool failure, or
+  - the user explicitly asks how guidance was selected/applied.
