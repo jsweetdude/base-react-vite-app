@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "a11y-context": {
+      "url": "https://accessibility-pattern-mcp-production.up.railway.app/mcp"
+    }
+  }
+}
